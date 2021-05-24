@@ -1,0 +1,81 @@
+#main-wrapper, body, h1, dt, dd, p, input, img {
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: white !important;
+	font-family: "Times New Roman", serif !important;
+	font-size: 11pt !important;
+}
+
+#main-wrapper {
+	margin: 2% !important;
+	width: auto;
+}
+
+#main-wrapper h1, #tewi-info p, select, .interface-guide {
+	display: none;
+}
+
+#main-wrapper .section h1, #tewi-info p.image {
+	display: block;
+}
+
+.section p.image {
+	text-align: center;
+}
+
+#tewi-info h1, #tewi-values h1, #tewi-results h1 {
+	margin-bottom: 2% !important;
+	color: black;
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+.tewi-value {
+	padding-bottom: 1em;
+}
+	
+	#tewi-values dt {
+		width: 17%;
+	}
+
+	#tewi-values .input-field {
+		position: relative;
+		top: -1.3em;
+		width: 26%;
+	}
+
+	#tewi-values .input-field input {
+		width: 4em !important;
+	}
+
+	#tewi-values dd {
+		width: 55%;
+	}
+
+#tewi-results li {
+	padding-top: 0 !important;
+}
+
+	#tewi-results.section li h1 {
+		margin-bottom: 0 !important;
+		display: inline-block;
+		text-decoration: none;
+		width: 20%;
+	}
+
+	#tewi-results.section li .result {
+		display: inline-block;
+	}
+	
+		#tewi-results.section li .result .value {
+			font-size: 100%;
+		}
+	
+		#tewi-results.section li .result .unit {
+			font-size: 100%;
+		}
+	
+		#tewi-results.section li .result .value.percentage {
+			text-decoration: underline;
+		}

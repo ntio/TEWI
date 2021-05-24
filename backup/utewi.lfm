@@ -1,0 +1,543 @@
+object Form1: TForm1
+  Left = 609
+  Height = 685
+  Top = 138
+  Width = 829
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = 'Calculo TEWI'
+  ClientHeight = 660
+  ClientWidth = 829
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  OnShow = FormShow
+  LCLVersion = '2.0.12.0'
+  object Label1: TLabel
+    Left = 25
+    Height = 15
+    Top = 49
+    Width = 31
+    Caption = 'GWP'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 25
+    Height = 15
+    Top = 87
+    Width = 7
+    Caption = 'L'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 24
+    Height = 15
+    Top = 127
+    Width = 13
+    Caption = 'm'
+    ParentColor = False
+  end
+  object Label4: TLabel
+    Left = 25
+    Height = 15
+    Top = 168
+    Width = 8
+    Caption = 'n'
+    ParentColor = False
+  end
+  object Label5: TLabel
+    Left = 23
+    Height = 15
+    Top = 208
+    Width = 9
+    Caption = 'B'
+    ParentColor = False
+  end
+  object Label6: TLabel
+    Left = 23
+    Height = 15
+    Top = 281
+    Width = 48
+    Caption = 'E anual'
+    ParentColor = False
+  end
+  object Label7: TLabel
+    Left = 23
+    Height = 15
+    Top = 312
+    Width = 64
+    Caption = 'E Reciclar'
+    ParentColor = False
+  end
+  object Label8: TLabel
+    Left = 20
+    Height = 15
+    Top = 355
+    Width = 124
+    Caption = 'E Refrigeracion util'
+    ParentColor = False
+  end
+  object Label9: TLabel
+    Left = 25
+    Height = 15
+    Top = 387
+    Width = 97
+    Caption = 'E calorifica util'
+    ParentColor = False
+  end
+  object Label10: TLabel
+    Left = 25
+    Height = 15
+    Top = 432
+    Width = 59
+    Caption = 'Reciclaje'
+    ParentColor = False
+  end
+  object cbgwp: TComboBox
+    Left = 80
+    Height = 33
+    Hint = 'Impacto de efecto invernadero en kg de CO2 por kg de refrigerante (GWP).'#10' El GWP para el refrigerante actual se puede encontrar en el Apéndice 1:'#10'2 de la Norma sueca de refrigeración, Parte general 1.'
+    Top = 48
+    Width = 121
+    ItemHeight = 0
+    Items.Strings = (
+      'R32'
+      'R134a'
+      'R407C'
+      'R410A'
+      'R417A'
+      'R404A'
+      'R507A'
+      'R290'
+      'R744'
+      'R717'
+    )
+    OnChange = cbgwpChange
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 0
+    Text = 'cbgwp'
+  end
+  object cbL: TComboBox
+    Left = 80
+    Height = 33
+    Hint = 'Fugas de refrigerante por año como porcentaje de la cantidad total de llenado.'#10'Según la Agencia Sueca de Protección del Medio Ambiente, la fuga total en Suecia asciende al 7,6%'#10'(no se incluye el sector móvil). Normalmente, las cantidades de fuga especificadas en la hoja informativa 6,'#10'  tabla 3 deben asumirse dependiendo del tipo de planta actual.'
+    Top = 87
+    Width = 424
+    ItemHeight = 0
+    Items.Strings = (
+      'Unidad de dispositivo < 3 kg'
+      'Unidad  < 3 kg (reconstruida / convertida)'
+      'Unidad > 3 kg (nueva)'
+      'Unidad de dispositivo > 3 kg (reconstruida / convertida)'
+      'Sistema parcialmente indirecto: tubería corta, pocas conexiones (nuevo)'
+      'Sistema parcialmente indirecto: tubería corta, pocas conexiones (reconstruido / convertido)'
+      'Sistema parcialmente indirecto: tubería larga, muchas conexiones (nuevo)'
+      'Sistema parcialmente indirecto: tubería larga, muchas conexiones (reconstruidas / convertidas)'
+      'Sistema directo: tubería corta, pocas conexiones (nuevo)'
+      'Sistema directo: tubería corta, pocas conexiones (reconstruido / convertido)'
+      'Sistema directo: tubería larga, muchas conexiones (nuevo)'
+      'Sistema directo: tubería larga, muchas conexiones (reconstruidas / convertidas)'
+      ''
+      ''
+    )
+    OnChange = cbLChange
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 1
+    Text = 'cbL'
+  end
+  object edgwp: TEdit
+    Left = 264
+    Height = 33
+    Top = 49
+    Width = 91
+    Enabled = False
+    TabOrder = 2
+    Text = '0'
+  end
+  object edL: TEdit
+    Left = 512
+    Height = 33
+    Top = 88
+    Width = 91
+    Enabled = False
+    TabOrder = 3
+    Text = '0'
+  end
+  object cbn: TComboBox
+    Left = 80
+    Height = 33
+    Hint = 'La vida económica del sistema. Establezca 10 años para una instalación al aire libre '#10'y 15 años para una instalación interior.'
+    Top = 168
+    Width = 173
+    ItemHeight = 0
+    Items.Strings = (
+      '10'
+      '15'
+    )
+    OnChange = cbnChange
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 4
+    Text = 'cbn'
+  end
+  object edn: TEdit
+    Left = 264
+    Height = 33
+    Top = 168
+    Width = 91
+    Enabled = False
+    TabOrder = 5
+    Text = '0'
+  end
+  object cbB: TComboBox
+    Left = 80
+    Height = 33
+    Hint = 'El equivalente de dióxido de carbono de la energía eléctrica comprada por kilovatio hora Kg CO2/kWh).'#10' Aquí, se utiliza el valor aceptado para la combinación de electricidad nórdica,que corresponde a  0,120 kg CO2/kWh.'
+    Top = 208
+    Width = 170
+    ItemHeight = 0
+    Items.Strings = (
+      'Norma noruega'
+      'Electricidad, energías renovables'
+      'Electricidad, no especificada'
+    )
+    OnChange = cbBChange
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 6
+    Text = 'cbB'
+  end
+  object edB: TEdit
+    Left = 264
+    Height = 33
+    Top = 208
+    Width = 91
+    Enabled = False
+    TabOrder = 7
+    Text = '0'
+  end
+  object cbReciclaje: TComboBox
+    Left = 168
+    Height = 33
+    Hint = ' Factor de recuperación / reciclaje en la futura descarga final del refrigerante antes de su destrucción.'#10'αReciclaje  α  corresponde a la parte que se puede recuperar de forma controlada durante el vaciado final'#10' al desguazar el sistema. Se agregará: 0,95 para unidades unitarias (95% de reciclaje) y 0,90 para unidades '#10' construidas en el sitio (90% de reciclaje).'
+    Top = 424
+    Width = 112
+    ItemHeight = 0
+    Items.Strings = (
+      'P'
+      'Unidad'
+      'Prpia Eleccion'
+    )
+    OnChange = cbReciclajeChange
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 8
+    Text = 'cbReciclaje'
+  end
+  object edReciclaje: TEdit
+    Left = 288
+    Height = 33
+    Top = 424
+    Width = 67
+    Enabled = False
+    TabOrder = 9
+    Text = '0'
+  end
+  object Label11: TLabel
+    Left = 368
+    Height = 15
+    Top = 56
+    Width = 71
+    Caption = 'kg CO2/kg '
+    ParentColor = False
+  end
+  object Label12: TLabel
+    Left = 608
+    Height = 15
+    Top = 96
+    Width = 53
+    Caption = '% anual'
+    ParentColor = False
+  end
+  object Label14: TLabel
+    Left = 368
+    Height = 15
+    Top = 176
+    Width = 24
+    Caption = 'año'
+    ParentColor = False
+  end
+  object Label15: TLabel
+    Left = 368
+    Height = 15
+    Top = 216
+    Width = 80
+    Caption = 'kg CO2/KWh'
+    ParentColor = False
+  end
+  object Label17: TLabel
+    Left = 342
+    Height = 15
+    Top = 312
+    Width = 57
+    Caption = 'KWh/año'
+    ParentColor = False
+  end
+  object Label18: TLabel
+    Left = 342
+    Height = 15
+    Top = 353
+    Width = 57
+    Caption = 'KWh/año'
+    ParentColor = False
+  end
+  object Label19: TLabel
+    Left = 342
+    Height = 15
+    Top = 392
+    Width = 57
+    Caption = 'KWh/año'
+    ParentColor = False
+  end
+  object Label20: TLabel
+    Left = 28
+    Height = 15
+    Top = 498
+    Width = 33
+    Caption = 'TEWI'
+    ParentColor = False
+  end
+  object Label21: TLabel
+    Left = 24
+    Height = 15
+    Top = 542
+    Width = 103
+    Caption = 'TEWI Especifico'
+    ParentColor = False
+  end
+  object Label22: TLabel
+    Left = 25
+    Height = 15
+    Top = 584
+    Width = 41
+    Caption = 'SSEER'
+    ParentColor = False
+  end
+  object btcalcularButton1: TButton
+    Left = 32
+    Height = 39
+    Top = 632
+    Width = 270
+    Caption = 'CALCULAR'
+    OnClick = btcalcularButton1Click
+    TabOrder = 10
+  end
+  object Label23: TLabel
+    Left = 208
+    Height = 15
+    Top = 498
+    Width = 59
+    Caption = 'TON CO2'
+    ParentColor = False
+  end
+  object edfugas: TEdit
+    Left = 392
+    Height = 33
+    Top = 489
+    Width = 64
+    Enabled = False
+    TabOrder = 11
+    Text = '0'
+  end
+  object Label24: TLabel
+    Left = 464
+    Height = 15
+    Top = 498
+    Width = 49
+    Caption = '%fugas'
+    ParentColor = False
+  end
+  object eddesguace: TEdit
+    Left = 518
+    Height = 33
+    Top = 490
+    Width = 58
+    Enabled = False
+    TabOrder = 12
+    Text = '0'
+  end
+  object Label25: TLabel
+    Left = 581
+    Height = 15
+    Top = 498
+    Width = 75
+    Caption = '%desguace'
+    ParentColor = False
+  end
+  object edenergia: TEdit
+    Left = 658
+    Height = 33
+    Top = 488
+    Width = 59
+    Enabled = False
+    TabOrder = 13
+    Text = '0'
+  end
+  object Label26: TLabel
+    Left = 716
+    Height = 15
+    Top = 498
+    Width = 62
+    Caption = '%Energia'
+    ParentColor = False
+  end
+  object edtoneladas: TEdit
+    Left = 151
+    Height = 33
+    Top = 488
+    Width = 52
+    Enabled = False
+    TabOrder = 14
+    Text = '0'
+  end
+  object Label27: TLabel
+    Left = 294
+    Height = 15
+    Top = 498
+    Width = 85
+    Caption = 'de las cuales'
+    ParentColor = False
+  end
+  object edm: TJLabeledFloatEdit
+    Left = 80
+    Height = 33
+    Hint = 'El refrigerante que se llena en kilogramos.'
+    Top = 127
+    Width = 64
+    DisplayFormat = '#,0.00'
+    Decimals = 2
+    NegativeColor = clDefault
+    EditLabel.Height = 15
+    EditLabel.Width = 17
+    EditLabel.Caption = 'Kg'
+    EditLabel.ParentColor = False
+    LabelPosition = lpRight
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 15
+    OnChange = edmChange
+  end
+  object edEanual: TJLabeledFloatEdit
+    Left = 176
+    Height = 33
+    Hint = 'Energía total suministrada en kWh por año, que consiste en la energía eléctrica real necesaria para el  funcionamiento '#10'de toda la planta. Incluyendo bombas, ventiladores, sistemas de control, sistemas periféricos y cualquier pérdida. '#10'Si no se conoce la energía des e periféricos,se puede ajustar al 17% del consumo de energía de los compresores.'
+    Top = 273
+    Width = 83
+    DisplayFormat = '#,0.00'
+    Decimals = 2
+    NegativeColor = clDefault
+    EditLabel.Height = 15
+    EditLabel.Width = 57
+    EditLabel.Caption = 'KWh/año'
+    EditLabel.ParentColor = False
+    LabelPosition = lpRight
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 16
+    OnChange = edEanualChange
+  end
+  object edEreciclar: TJLabeledFloatEdit
+    Left = 175
+    Height = 33
+    Hint = 'La Eenergía reciclada útil en kWh por año es la cantidad de calor recuperado del lado caliente '#10'de la planta. La liquidación puede tener lugar con la cantidad de energía recuperada para '#10' fines que de otro modo se habrían reemplazado con energía comprada para un propósito '#10'correspondiente. Si no se conoce la energía de recuperación útil, se puede utilizar '#10' la potencia de calentamiento del condensador instalada × 30% de las horas de funcionamiento '#10'    completas.'
+    Top = 307
+    Width = 84
+    DisplayFormat = '#,0.00'
+    Decimals = 2
+    NegativeColor = clDefault
+    EditLabel.Height = 15
+    EditLabel.Width = 57
+    EditLabel.Caption = 'KWh/año'
+    EditLabel.ParentColor = False
+    LabelPosition = lpRight
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 17
+    OnChange = edEreciclarChange
+  end
+  object edRefigeracion: TJLabeledFloatEdit
+    Left = 176
+    Height = 33
+    Hint = ' La energía de refrigeración útil en kWh por año es la capacidad de refrigeración utilizada '#10'de los compresores y la posible refrigeración gratuita.Si no se conoce la energía de'#10'refrigeración útil, se utiliza la potencia de refrigeración del compresor × el '#10'número de horas de funcionamiento completo, donde las horas de funcionamiento '#10'completo se toman de la hoja informativa 6, tabla 2.'
+    Top = 347
+    Width = 83
+    DisplayFormat = '#,0.00'
+    Decimals = 2
+    NegativeColor = clDefault
+    EditLabel.Height = 15
+    EditLabel.Width = 57
+    EditLabel.Caption = 'KWh/año'
+    EditLabel.ParentColor = False
+    LabelPosition = lpRight
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 18
+    OnChange = edRefigeracionChange
+  end
+  object edcalorifica: TJLabeledFloatEdit
+    Left = 176
+    Height = 33
+    Hint = ' La energía térmica en kWh por año que se utiliza de una bomba de calor.'
+    Top = 386
+    Width = 83
+    DisplayFormat = '#,0.00'
+    Decimals = 2
+    NegativeColor = clDefault
+    EditLabel.Height = 15
+    EditLabel.Width = 57
+    EditLabel.Caption = 'KWh/año'
+    EditLabel.ParentColor = False
+    LabelPosition = lpRight
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 19
+    OnChange = edcalorificaChange
+  end
+  object edtewiesp: TEdit
+    Left = 152
+    Height = 33
+    Top = 536
+    Width = 128
+    TabOrder = 20
+    Text = '0'
+  end
+  object Label28: TLabel
+    Left = 296
+    Height = 15
+    Top = 542
+    Width = 80
+    Caption = 'kg CO2/kWh'
+    ParentColor = False
+  end
+  object edsseer: TEdit
+    Left = 152
+    Height = 33
+    Top = 580
+    Width = 77
+    TabOrder = 21
+    Text = '0'
+  end
+  object MainMenu1: TMainMenu
+    Left = 229
+    Top = 17
+    object MenuItem1: TMenuItem
+      Caption = 'splash'
+      OnClick = MenuItem1Click
+      object MenuItem3: TMenuItem
+        Caption = 'Ver SPLASH'
+        OnClick = MenuItem3Click
+      end
+    end
+  end
+end

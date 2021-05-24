@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html><head>
+		<title>Calculo TEWI</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script type="text/javascript">
+		
+		String.prototype.toFloat = function () {
+			return parseFloat(this.replace(/,/g, '.'), 10);
+		};
+		
+		Number.prototype.min = function () {
+			return Math.floor(this);
+		};
+		
+		Number.prototype.max = function () {
+			return Math.ceil(this);
+		};
+		
+		Number.prototype.round = function (decimals) {
+			if (!decimals) {
+				decimals = 0;
+			}
+			var pow = Math.pow(10, (decimals || 0));
+			return Math.round(this * pow) / pow;
+		};
+		
+		Number.prototype.setDecimals = function (decimals) {
+			var number = this.round(decimals);
+			var parts = number.toString().split('.');
+			if (!parts[1]) parts[1] = '';
+			if (parts[1].length < decimals) {
+				number = parts[0] + '.' + parts[1];
+				for (var i = 0, l = decimals - parts[1].length; i < l; i++) {
+					number += '0';
+				}
+			}
+			return number; 
+		};
+		
+		var calculationError = 'No se completan todos los valores.';
+		
+		var outputTEWICaluculation = function () {
+			var GWP = document.getElementById('tewi-gwp').value.toFloat();
+			var L = document.getElementById('tewi-l').value.toFloat() / 100;
+			var n = document.getElementById('tewi-n').value.toFloat();
+			var m = document.getElementById('tewi-m').value.toFloat();
+			var B = document.getElementById('tewi-b').value.toFloat();
+			var EArlig = document.getElementById('tewi-e-arlig').value.toFloat();
+			var EAtervinn = document.getElementById('tewi-e-atervinn').value.toFloat();
+			var ENyttigKylenergi = document.getElementById('tewi-e-nyttig-kylenergi').value.toFloat();
+			var ENyttigVarmeenergi = document.getElementById('tewi-e-nyttig-varmeenergi').value.toFloat();
+			var ARecovery = document.getElementById('tewi-a-recovery').value.toFloat();
+			
+			var faktorsumma = (GWP * L * m * n) + (GWP * m * (1 - ARecovery)) + (EArlig * n * B);
+			var ENyttigOchAtervunnen = (EAtervinn + ENyttigKylenergi + ENyttigVarmeenergi);
+		
+			var tewiFB6Result = document.getElementById('tewi-fb6-result');
+			if (tewiFB6Result) {
+				if (!isNaN(faktorsumma)) {
+					tewiFB6Result.innerHTML = '<span class="value">' + ((faktorsumma / 1000).round()) + '</span><span class="unit"> ton CO<sub>2</sub></span>';
+					var leakage = (100 * (GWP * L * m * n) / faktorsumma).round(); // Läckage
+					if (!isNaN(leakage) && result !== Infinity) {
+						tewiFB6Result.innerHTML += ', de las cuales <span class="value percentage">' + leakage + '%</span> son fugas';
+					}
+					var scrapped = (100 * (GWP * m * (1 - ARecovery)) / faktorsumma).round(); // Skrotning
+					if (!isNaN(scrapped) && result !== Infinity) {
+						tewiFB6Result.innerHTML += ', <span class="value percentage">' + scrapped + '%</span> es desguace';
+					}
+					var energy = (100 * (EArlig * n * B) / faktorsumma).round(); // Energi
+					if (!isNaN(energy) && result !== Infinity) {
+						tewiFB6Result.innerHTML += ', <span class="value percentage">' + energy + '%</span> es energía';
+					}
+				} else {
+					tewiFB6Result.innerHTML = calculationError;
+				}
+			}
+		
+			var tewiMFResult = document.getElementById('tewi-mf-result');
+			if (tewiMFResult) {
+				var result = (faktorsumma / ENyttigOchAtervunnen);
+				if (!isNaN(result) && result !== Infinity) {
+					tewiMFResult.innerHTML = '<span class="value">' + (result.setDecimals(2)) + '</span><span class="unit"> kg CO<sub>2</sub>/kWh</span>';
+				} else {
+					tewiMFResult.innerHTML = calculationError;
+				}
+			}
+		
+			var SSEERResult = document.getElementById('sseer-result');
+			if (SSEERResult) {
+				var result = (ENyttigOchAtervunnen / EArlig);
+				if (!isNaN(result) && result !== Infinity) {
+					SSEERResult.innerHTML = '<span class="value">' + (result.setDecimals(2)) + '</span>';
+				} else {
+					SSEERResult.innerHTML = calculationError;
+				}
+			}
+		};
+		
+		window.onload = function () {
+			var tewiValues = document.getElementById('tewi-values');
+			if (tewiValues) {
+				var inputFields = tewiValues.getElementsByTagName('input');
+				var i = 0, l = inputFields.length;
+				while (i < l) {
+					inputFields[i].onkeyup = outputTEWICaluculation;
+					inputFields[i].onchange = function () {
+						var select = this.parentNode.getElementsByTagName('select')[0];
+						if (select) {
+							var options = select.getElementsByTagName('option');
+							var i = 0, l = options.length;
+							while (i < l) {
+								if (options[i].value === '') {
+									options[i].selected = true;
+								}
+								i++;
+							}
+						}
+					};
+					i++;
+				}
+			}
+			
+			var allElements = document.getElementsByTagName('a');
+			var i = 0, l = allElements.length;
+			while (i < l) {
+				if ((' ' + allElements[i].className + ' ').indexOf(' print-results ') !== -1) {
+					allElements[i].onclick = function () {
+						window.print();
+					};
+				}
+				i++;
+			}
+			
+			var selectElements = document.getElementsByTagName('select');
+			var i = 0, l = selectElements.length;
+			while (i < l) {
+				selectElements[i].onchange = function () {
+					var input = this.parentNode.getElementsByTagName('input')[0];
+					if (input) {
+						if (input.id === 'tewi-gwp') {
+							var options = this.getElementsByTagName('option');
+							var i = 0, l = options.length;
+							while (i < l) {
+								if (options[i].selected) {
+									if (i === 0) {
+										document.getElementById('tewi-gwp-refrigerant').innerHTML = 'köldmed.';
+									} else {
+										document.getElementById('tewi-gwp-refrigerant').innerHTML = options[i].innerHTML;
+									}
+								}
+								i++;
+							}
+						}
+						input.value = this.value;
+						outputTEWICaluculation();
+					}
+				};
+				
+				var input = selectElements[i].parentNode.getElementsByTagName('input')[0];
+				var options = selectElements[i].getElementsByTagName('option');
+				var j = 0, jl = options.length;
+				while (j < jl) {
+					if (options[j].selected) {
+						input.value = options[j].value;
+						options[j].selected = 'selected';
+					}
+					j++;
+				}
+				
+				i++;
+			}
+			
+			outputTEWICaluculation();
+		};
+			
+		</script>
+		<link rel="stylesheet" type="text/css" media="all" href="main.css">
+		<link rel="stylesheet" type="text/css" media="print" href="print.css">
+	</head>
+	<body>
+		<div id="main-wrapper">
+			<p class="logotypes">
+				<img src="skn.png" alt="SKN" width="75" height="77">
+				<img src="skvp.png" alt="Kyl &amp; Värmepumpföretagen" width="93" height="80">
+			</p>
+			<h1>Cálculo TEWI</h1>
+			<div class="section" id="tewi-info">
+				<h1>Cálculo de TEWI, TEWI específico y SSEER<span class="interface-guide"> (índice de eficiencia energética del sistema estacional)</span></h1>
+				<p>El cálculo de <strong>TEWI</strong>  en su definición original no tiene en cuenta la energía reciclada y utilizada, 
+que son factores muy importantes en los sistemas de refrigeración y bombas de calor. 
+En la fórmula dada a continuación para<strong>TEWI Específico,</strong>, estas cantidades de energía también se tienen en cuenta y se obtiene una cifra de bondad en kg CO<sub>2</sub>/kWh
+ para la unidad 
+ o sistema en cuestión, a lo largo de su vida económica. Esta cifra de bondad se puede utilizar para comparar diferentes
+  instalaciones o soluciones de sistemas, de uno mismo o de diferentes proveedores.
+.</p>
+				<p><strong>SSEER:</strong> Muchos fabricantes de unidades han desarrollado hoy una eficiencia anual (SPF = Factor de rendimiento estacional)
+ para sus unidades en la aplicación prevista y en determinadas condiciones. A esto hay que añadir el consumo energético
+  de los equipos periféricos (bombas, ventiladores, equipos de control, etc.) que requiere el sistema. Si no se conoce 
+  este consumo, se puede estimar en el 17% del consumo energético de la unidad.
+</p>
+
+				<p>El factor TEWI específico se calcula mediante la siguiente ecuación:</p>
+				<p class="image"><img src="tewi.png" alt="TEWI-formel"></p>
+				<p>La eficiencia anual del sistema se calcula mediante la siguiente ecuación:</p>
+				<p class="image"><img src="sseer.png" alt="SSEER-formel"></p>
+			</div>
+			<form action="" method="post">
+				<dl class="section" id="tewi-values">
+					<h1>Valores</h1>
+					<p class="interface-guide">Complete los valores a continuación y TEWI, TEWI específico y SSEER se 
+generarán automáticamente en la parte inferior de la página. Imprime valores y resultados.
+</p>
+					<div class="tewi-value">
+						<dt>GWP</dt>
+						<div class="input-field tewi-gwp">
+							<select type="text">
+								<option value="">Seleccione</option>
+								<option value="675">R32</option>
+								<option value="1430" selected="selected">R134a </option>
+								<option value="1774">R407C</option>
+								<option value="2088">R410A</option>
+								<option value="2346">R417A</option>
+								<option value="3922">R404A</option>
+								<option value="3985">R507A</option>
+								<option value="3">R290</option>
+								<option value="1">R744</option>
+								<option value="0">R717</option>
+							</select>
+							<input id="tewi-gwp" type="text" value="1430">
+							<span class="unit">kg CO<sub>2</sub>/kg <span id="tewi-gwp-refrigerant">R134a </span></span>
+						</div>
+						<dd>
+							<p> Impacto de efecto invernadero <sub>2</sub> en kg de CO2 por kg de refrigerante (GWP).<span class="interface-guide"> El GWP para el refrigerante actual se puede encontrar en el Apéndice 1:</span>
+     2 de la Norma sueca de refrigeración, 
+    Parte general 1.</p>
+						</dd>
+					</div>
+					<div class="tewi-value">
+						<dt>L</dt>
+						<div class="input-field tewi-l">
+							<select type="text">
+								<option value="0" title="Eget val">Seleccione</option>
+								<option value="0,5" title="Enhetsaggregat &lt;3kg (nytt)" selected="selected">Unidad de dispositivo &lt; 3 kg (nueva)</option> 
+								<option value="2,5" title="Enhetsaggregat &lt;3kg (ombyggt/konverterat)">Unidad unidad &lt; 3 kg (reconstruida / convertida)</option> 
+								<option value="1,0" title="Enhetsaggregat &gt;3kg (nytt)">Unidad &gt; 3 kg (nueva)</option> 
+								<option value="3,5" title="Enhetsaggregat &gt;3kg (ombyggt/konverterat)">Unidad de dispositivo &gt; 3 kg (reconstruida / convertida)</option> 
+								<option value="2,0" title="Delvis indirekt system - kort rördragning, få anslutningar (nytt)">Sistema parcialmente indirecto: tubería corta, pocas conexiones (nuevo)</option> 
+								<option value="7,0" title="Delvis indirekt system - kort rördragning, få anslutningar (ombyggt/konverterat)">Sistema parcialmente indirecto: tubería corta, pocas conexiones (reconstruido / convertido)</option> 
+								<option value="5,0" title="Delvis indirekt system -  lång rördragning, många anslutningar (nytt)">Sistema parcialmente indirecto: tubería larga, muchas conexiones (nuevo)</option> 
+								<option value="10,0" title="Delvis indirekt system -  lång rördragning, många anslutningar (ombyggt/konverterat)">Sistema parcialmente indirecto: tubería larga, muchas conexiones (reconstruidas / convertidas)</option> 
+								<option value="5,0" title="Direkt system -  kort rördragning, få anslutningar (nytt)">Sistema directo: tubería corta, pocas conexiones (nuevo)</option> 
+								<option value="10,0" title="Direkt system -  kort rördragning, få anslutningar (ombyggt/konverterat)">Sistema directo: tubería corta, pocas conexiones (reconstruido / convertido)</option> 
+								<option value="10,0" title="Direkt system -  lång rördragning, många anslutningar (nytt)">Sistema directo: tubería larga, muchas conexiones (nuevo)</option> 
+								<option value="15,0" title="Direkt system -  lång rördragning, många anslutningar (ombyggt/konverterat)">Sistema directo: tubería larga, muchas conexiones (reconstruidas / convertidas)</option>
+							</select>
+							<input id="tewi-l" type="text" value="0,5">
+							<span class="unit">%/år</span>
+						</div>
+						<dd>
+							<p>Fugas de refrigerante por año como porcentaje de la cantidad total de llenado.<span class="interface-guide">
+
+     Según la Agencia Sueca de Protección del Medio Ambiente, la fuga total en Suecia asciende al 7,6%
+      (no se incluye el sector móvil). Normalmente, las cantidades de fuga especificadas en la hoja informativa 6,
+       tabla 3 deben asumirse dependiendo del tipo de planta actual.</span></p>
+						</dd>
+					</div>
+					<div class="tewi-value">
+						<dt>m</dt>
+						<div class="input-field tewi-m">
+							<input id="tewi-m" type="text" value="0,350"> <span class="unit">kg</span>
+						</div>
+						<dd>
+							<p> El refrigerante que se llena en kilogramos.</p>
+						</dd>
+					</div>
+					<div class="tewi-value">
+						<dt>n</dt>
+						<div class="input-field tewi-n">
+							<select type="text">
+								<option value="0">Seleccione</option>
+								<option value="10" selected="selected">10 años</option>
+								<option value="15">15 años</option>
+							</select>
+							<input id="tewi-n" type="text" value="10">
+							<span class="unit">år</span>
+						</div>
+						<dd>
+							<p> La vida económica del sistema. Establezca 10 años para una instalación al aire libre y 15 años 
+    para una instalación interior.</p>
+						</dd>
+					</div>
+					<div class="tewi-value">
+						<dt>B</dt>
+						<div class="input-field tewi-b">
+							<select type="text">
+								<option value="0">Seleccione</option>
+								<option value="0,120" title="Nordisk elmix">Norma noruega</option>
+								<option value="0,005" title="El, förnybar energi">Electricidad, energías renovables</option>
+								<option value="0,280" title="El, ospecificerad" selected="selected">Electricidad, no especificada</option>
+							</select>
+							<input id="tewi-b" type="text" value="0,280">
+							<span class="unit">kg CO<sub>2</sub>/kWh</span>
+						</div>
+						<dd>
+							<p>
+								El equivalente de dióxido de carbono de la energía eléctrica comprada por kilovatio hora
+								(kg CO<sub>2</sub>/kWh). <span class="interface-guide"> Aquí, se utiliza el valor aceptado para la combinación de electricidad nórdica, que corresponde a 
+								 0,120 kg<sub>CO<sub>2</sub></sub>/kWh.</span>
+							</p>
+						</dd>
+					</div>
+					<div class="tewi-value">
+						<dt>E<sub>anualmente</sub></dt>
+						<div class="input-field tewi-e-arlig">
+							<input id="tewi-e-arlig" type="text" value="500"> <span class="unit">kWh/ año anual</span>
+						</div>
+						<dd>
+							<p> Energía total suministrada en kWh por año, que consiste en la energía eléctrica real necesaria para el
+     funcionamiento de toda la planta. <span class="interface-guide"> Incluyendo bombas, ventiladores, sistemas de control, 
+     sistemas periféricos y cualquier pérdida. Si no se conoce la energía des e periféricos, 
+     se puede ajustar al 17% del consumo de energía de los compresores.</span>
+							</p>
+						</dd>
+						<div class="tewi-value">
+						<dt>E<sub>Reciclar</sub></dt>
+						<div class="input-field tewi-e-atervinn">
+							<input id="tewi-e-atervinn" type="text" value="0"> <span class="unit">kWh/año</span>
+						</div>
+						<dd>
+							<p>
+								 La energía reciclada útil en kWh por año es la cantidad de calor recuperado del lado caliente 
+    de la planta.<span class="interface-guide">  La liquidación puede tener lugar con la cantidad de energía recuperada para 
+    fines que de otro modo se habrían reemplazado con energía comprada para un propósito 
+    correspondiente. Si no se conoce la energía de recuperación útil, se puede utilizar 
+    la potencia de calentamiento del condensador instalada × 30% de las horas de funcionamiento 
+    completas.</span>
+							</p>
+						</dd>
+					</div>
+					<div class="tewi-value">
+						<dt>E<sub>Energía de refrigeración útil</sub></dt>
+						<div class="input-field tewi-e-nyttig-kylenergi">
+							<input id="tewi-e-nyttig-kylenergi" type="text" value="0"> <span class="unit">kWh/año</span>
+						</div>
+						<dd>
+							<p>
+								 La energía de refrigeración útil en kWh por año es la capacidad de refrigeración utilizada 
+    de los compresores y la posible refrigeración gratuita.<span class="interface-guide"> Si no se conoce la energía de
+     refrigeración útil, se utiliza la potencia de refrigeración del compresor × el 
+     número de horas de funcionamiento completo, donde las horas de funcionamiento 
+     completo se toman de la hoja informativa 6, tabla 2.</span>
+							</p>
+						</dd>
+					</div>
+					<div class="tewi-value">
+						<dt>E<sub>Energía calorífica útil</sub></dt>
+						<div class="input-field tewi-e-nyttig-varmeenergi">
+							<input id="tewi-e-nyttig-varmeenergi" type="text" value="0"> <span class="unit">kWh/año</span>
+						</div>
+						<dd>
+							<p>
+								  La energía térmica en kWh por año que se utiliza de una bomba de calor.
+							</p>
+						</dd>
+					</div>
+					<div class="tewi-value">
+						<dt>α<sub>Reciclaje</sub></dt>
+						<div class="input-field tewi-a-recovery">
+							<select type="text">
+								<option value="0,90" selected="selected">P </option>
+								<option value="0,95">Unidad</option>
+								<option value="0">Propia elección</option>
+							</select>
+							<input id="tewi-a-recovery" type="text" value="0,90">
+						</div>
+						<dd>
+							<p>
+								  Factor de recuperación / reciclaje en la futura descarga final del refrigerante antes de su destrucción.
+								<span class="interface-guide">α<sub>Reciclaje</sub>  α  corresponde a la parte que se puede recuperar de forma controlada durante el vaciado final
+     al desguazar el sistema. Se agregará: 0,95 para unidades unitarias (95% de reciclaje) y 0,90 para unidades 
+     construidas en el sitio (90% de reciclaje).</span>
+							</p>
+							<span class="unit">&nbsp; <!-- Faktor. --></span>
+						</dd>
+					</div>
+				</dl>
+			</form>
+			<div class="section" id="tewi-results">
+				<h1>Resultados</h1>
+				<ul>
+					<li>
+						<h1>TEWI</h1>
+						<div class="result" id="tewi-fb6-result"><span class="value">1</span><span class="unit"> ton CO<sub>2</sub></span>,  de las cuales  <span class="value percentage">2%</span> fugas, <span class="value percentage">3%</span> desguace, <span class="value percentage">95%</span> energía</div>
+					</li>
+					<li>
+						<h1>TEWI específico </h1>
+						<div class="result" id="tewi-mf-result"> No se completan todos los valores.</div>
+					</li>
+					<li>
+						<h1>SSEER</h1>
+						<div class="result" id="sseer-result"><span class="value">0.00</span></div>
+					</li>
+				</ul>
+				<p class="interface-guide"><a class="print-results">Imprime valores y resultados.</a></p>
+			</div>
+		</div>
+	
+
+<div state="voice" class="placeholder-icon" id="tts-placeholder-icon" title="Click to show TTS button" style="background-image: url(&quot;moz-extension://6f520d98-cfc0-40fc-9d56-773f30e5ba33/data/content_script/icons/voice.png&quot;); display: none;"><canvas width="36" height="36" class="loading-circle" id="text-to-speech-loader" style="display: none;"></canvas></div></body></html>

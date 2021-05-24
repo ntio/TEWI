@@ -1,0 +1,224 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* Main code starts here */
+
+body {
+	font: 13px/18px Verdana, Arial, Sans-serif;
+	background-color: #ffeedd;
+}
+
+h1 {
+	font-size: 160%;
+	font-weight: bold;
+	color: #663300;
+}
+
+strong {
+	font-weight: bold;
+}
+
+sub {
+	font-size: 80%;
+	vertical-align: sub;
+}
+
+.logotypes {
+	float: right;
+}
+
+.unit {
+	font-size: 80%;
+}
+
+.section h1 {
+	margin-top: 2%;
+	font-size: 100%;
+	font-weight: normal;
+	color: #996633;
+	/*border-bottom: 1px solid #996633;*/
+	text-decoration: underline;
+}
+
+.section p {
+	margin-top: 2%;
+}
+
+.section p.image {
+	text-align: center;
+}
+
+.section img {
+	border: 1px solid #996633;
+}
+
+#main-wrapper {
+	margin: 5% 0 5% 10%;
+	padding: 20px;
+	width: 800px;
+	border: 8px solid #ffcc99;
+}
+	
+	.print-results {
+		cursor: pointer;
+		text-decoration: underline;
+		color: #663300;
+	}
+
+	#tewi-values {
+		width: 100%;
+	}
+
+		#tewi-values dt, #tewi-values .input-field, #tewi-values dd {
+			margin-top: 20px;
+			display: inline-block;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		#tewi-values dt {
+			padding-top: 5px;
+			width: 15%;
+			font-size: 120%;
+			font-weight: bold;
+			vertical-align: middle;
+		}
+
+		#tewi-values .input-field {
+			width: 31%;
+		}
+		
+			#tewi-values .input-field.tewi-l select {
+				width: 14em;
+			}
+		
+			#tewi-values .input-field.tewi-b select {
+				width: 8em;
+			}
+
+			#tewi-values .input-field input {
+				padding: 2px;
+				width: 30%;
+				font-size: 120%;
+				text-align: right;
+				border: 1px solid #996633;
+			}
+			
+			#tewi-values .input-field.tewi-l input,
+			#tewi-values .input-field.tewi-m input,
+			#tewi-values .input-field.tewi-n input {
+				width: 2em;
+			}
+
+			#tewi-values .input-field.tewi-gwp input {
+				width: 2.5em;
+			}
+
+			#tewi-values .input-field.tewi-b input,
+			#tewi-values .input-field.tewi-a-recovery input {
+				width: 3em;
+			}
+
+			#tewi-values .input-field.tewi-e-arlig input,
+			#tewi-values .input-field.tewi-e-atervinn input,
+			#tewi-values .input-field.tewi-e-nyttig-kylenergi input,
+			#tewi-values .input-field.tewi-e-nyttig-varmeenergi input {
+				width: 4em;
+			}
+
+			#tewi-values .input-field select {
+				padding: 2px;
+				width: 6.5em;
+				font-size: 90%;
+				border: 1px solid #996633;
+			}
+		
+			#tewi-values .input-field.tewi-a-recovery select {
+				width: 12em;
+			}
+
+		#tewi-values dd {
+			width: 50%;
+			font-size: 80%;
+		}
+
+		#tewi-values dd p {
+			margin-top: 0;
+		}
+		
+#tewi-results li {
+	padding-top: 2%;
+}
+		
+	#tewi-results li h1 {
+		margin-right: 2%;
+		margin-top: 0;
+		font-size: 120%;
+		font-weight: bold;
+		color: black;
+		border-bottom: none;
+		display: inline-block;
+		width: 18%;
+	}
+	
+	#tewi-results li .result {
+		display: inline-block;
+	}
+	
+		#tewi-results li .result .value {
+			font-size: 120%;
+		}
+
+		#tewi-results li .result .value.percentage {
+			font-size: 120%;
+		}
+	
+		#tewi-results li .result .unit {
+			font-size: 120%;
+		}
